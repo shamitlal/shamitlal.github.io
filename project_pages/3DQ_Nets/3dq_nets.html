@@ -14,7 +14,7 @@
 
 	<body>
 		<div id="content">
-			<h1>3DQ-Nets: Learning 3D Vision without 3D Supervision using Pose Equivariant 3D Quantized Neural Scene Representations</h1>
+			<h1>3D Object Recognition By Corresponding and Quantizing Neural 3D Scene Representations</h1>
 			<div style="text-align: center">
 				<span class="author"><a href="https://mihirp1998.github.io/" target="_blank">Mihir Prabhudesai*</a></span>
 				<span class="author"><a href="https://shamitlal.github.io/" target="_blank">Shamit Lal*</a></span>
@@ -38,17 +38,24 @@
 
 			<h2>Abstract</h2>
 			<p>
-				We present a  framework for learning 3D perception without supervision from 3D annotations. 
-				Our model encodes input RGB-D images into 3D scene feature maps,   detects objects in these maps, and quantizes  them into a dictionary of  scale and pose equivariant 3D prototypes, 
-				supervised  by depth and egomotion of an  agent that moves  in static world scenes and collects images labelled with (potentially inaccurate) 2D category-agnostic object boxes. 
-				Our architecture has three distinct yet interdependent functionalities: 
-				representation  learning  from intra-scene and cross-scene correspondences, 3D salient object detection, and pose-equivariant clustering of detected  objects into 
-				3D prototypes.  
-				 We optimize for  view prediction, cross-scene correspondences,  visual detection, and visual compression with a mix of end-to-end gradient descent and expectation-maximization iterations. 
-				We show how compression helps 3D object detection  improve over time by penalizing object proposals not matching to any prototypes, intra-scene correspondences implemented as 
-				view prediction  
-				help inference of cross-scene correspondences, and joint intra and inter scene correspondence guided metric learning  helps compression by yielding accurate inference of poses aligning prototypes to detected  instances.  
-				We demonstrate the usefulness of our framework in few-shot learning: the annotation of few object instances  suffices to  learn an accurate 3D object detector for it.  
+				We propose a system that learns to detect objects and infer their 3D poses in RGB-D images. 
+				Many existing systems can identify objects and infer 3D poses, but they heavily rely on human 
+				labels and 3D annotations. The challenge here is to achieve this without relying on strong 
+				supervision signals. To address this challenge, we propose a model that maps RGB-D images to a 
+				set of 3D visual feature maps in a differentiable fully-convolutional manner, supervised by 
+				predicting views. The 3D feature maps correspond to a featurization of the 3D world scene 
+				depicted in the images. The object 3D feature representations are invariant to camera viewpoint 
+				changes or zooms, which means feature matching can identify similar objects under different 
+				camera viewpoints. We can compare the 3D feature maps of two objects by searching alignment 
+				across scales and 3D rotations, and, as a result of the operation, we can estimate pose and 
+				scale changes without the need for 3D pose annotations. We cluster object feature maps into 
+				a set of 3D prototypes that represent familiar objects in canonical scales and orientations. 
+				We then parse images by inferring the prototype identity and 3D pose for each detected object. 
+				We compare our method to numerous baselines that do not learn 3D feature visual representations 
+				or do not attempt to correspond features across scenes, and outperform them by a large margin 
+				in the tasks of object retrieval and object pose estimation. Thanks to the 3D nature of the 
+				object-centric feature maps, the visual similarity cues are invariant to 3D pose changes or small 
+				scale changes, which gives our method an advantage over 2D and 1D methods. 
 			</p>
 			<br>
 
@@ -58,53 +65,26 @@
 			</div> -->
 	
 			<div style="text-align: center;">
-				<img src="images/3dqnet_arch.png" width="1000"></img>
+				<img src="images/fig1_mihir8.png" width="500"></img>
 			</div>
-
-
+			<br> 
+			<b>Top: Model overview.</b> Our model takes as input posed RGB-D images of scenes, and outputs 3D prototypes of the objects. 
+			<b>Bottom: Evaluation tasks.</b> (a) Scene parsing: Given a new scene, we match each detected object against the prototypes using a rotation-aware check to infer its identity and pose.
+			(b) Image generation: We visualize prototypes with a pre-trained 3D-to-2D image renderer. (c) Few shot object labelling: Assigning a label to a prototype automatically transfers this label to its assigned instances.
+			<br> <br>
 			<div style="text-align: center;">
-				<h3 align="left">  Joing Prototype - Perception Learning </h3>
-				<table>
-					<tr>
-						<td><img src="images/perception_learning.png" width="500"/></td>
-						<td><img src="images/prototype_learning.png" width="500"/></td>
-					</tr>
-				</table>
-				<h3 align="left"> GIGNs </h3>
-				<table>
-					<tr>
-						<td><img src="images/grrn.gif" width="500"/></td>
-					</tr>
-				</table>
+				<img src="images/fig2_mihir6.png" width="1000"></img>
 			</div>
+			<br>
+			<b>Architecture"</b>Given multi-view posed RGB-D images of scenes as input during training, our model learns to map a single RGB-D image to a completed scene 3D feature map at test time, by training for view prediction  (b). The model additionally uses cross-scene and cross-object 3D correspondence mining and metric learning, to make the features more discriminative (c).  Finally, using these learned features, our model quantizes object instances into a set of pose-canonical 3D prototypes using rotation-aware matching (d). These learned prototypes help improve our object detector by providing confident positive 3D object box labels (e).
 
-			<h2>Quantitative Results</h2>
-
-			<div style="text-align: center;">
-				
-				<br><br>
-				<table align="center">
-					<tr>
-						<td><img src="images/table1.png" width="500"/></td>
-						<td><img src="images/table2.png" width="500"/></td>
-					</tr>
-					<tr>
-						<td><img src="images/fig3.png" width="500"/></td>
-						<td><img src="images/table3.png" width="500"/></td>
-					</tr>
-					<tr>
-						<td><img src="images/table4.png" width="500"/></td>
-						<td><img src="images/table5.png" width="500"/></td>
-					</tr>
-				</table>
-			</div>
-
-			<h2>Qualitative Results</h2>
+			
+			<h2>Scene Parsing Results</h2>
 
 			
 
 			<div style="text-align: center;">
-				<h3 align="left"> <strong> Scene Parsing </strong> </h3>
+				<!-- <h3 align="left"> <strong> Scene Parsing </strong> </h3> -->
 				<table align="center">
 					<tr>
 						<td><img src="images/scene_parse1.png" width="450"/></td>
@@ -118,13 +98,13 @@
 						<td><img src="images/scene_parse3.png" width="450"/></td>
 						<td>
 							<video width="500" height="500" controls autoplay>
-  								<source src="images/real_world.mp4" type="video/mp4">
+  								<source src="images/realworld.mov" type="video/mp4">
   							</video>
 						</td>
 					</tr>
 				</table>
 
-				<br><br>
+				<!-- <br><br>
 				<h3 align="left"> <strong> Retrievals </strong> </h3>
 				<table align="center">
 					<tr>
@@ -132,9 +112,9 @@
 						<td><img src="images/retrieval_2.png" width="490"/></td>
 					</tr>
 
-				</table>
+				</table> -->
 
-				<br><br>
+				<!-- <br><br>
 				<h3 align="left"> <strong> Prototype Reconstructions and Self Improving Detections </strong> </h3>
 				<table align="center">
 					<tr>
@@ -142,7 +122,7 @@
 						<td><img src="images/det1.png" width="450"/></td>
 					</tr>
 
-				</table>
+				</table> -->
 			</div>
 
 
@@ -150,11 +130,11 @@
 
 			<h2>Citation</h2>
 			<div class="paper">
-				<div class="paper_pic"><img src="images/paper_pic_2.png" width=190></div>
+				<div class="paper_pic"><img src="images/paper_pic.png" width=190></div>
 				<div class="paper_content">
-					<h3><b>3DQ-Nets: Learning 3D Vision without 3D Supervision using Pose Equivariant 3D Quantized Neural Scene Representations</b></h3>
-					<h4><span style="font-weight:normal;">Mihir_Prabhudesai , Shamit Lal, Hsiao-Yu Tung, Adam W Harley, Shubhankar Potdar, Katerina Fragkiadaki</span></h3>
-					<h4>Supplementary <a href="supplementary.pdf" target="_blank"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i></a>  | 
+					<h3><b>3D Object Recognition By Corresponding and Quantizing Neural 3D Scene Representations</b></h3>
+					<h4><span style="font-weight:normal;">Mihir Prabhudesai*, Shamit Lal*, Hsiao-Yu Tung, Adam W Harley, Shubhankar Potdar, Katerina Fragkiadaki</span></h3>
+					<!-- <h4>Supplementary <a href="supplementary.pdf" target="_blank"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i></a>  |  -->
 					arXiv preprint <a href="" target="_blank"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i></a>  | 
 					Code <a href="" target="_blank"><i class="fab fa-github fa-lg"></i></a></h4>
 					<h3>BibTex</h3>
